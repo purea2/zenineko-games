@@ -627,7 +627,7 @@ function boot(){
   screen = 'title'; renderScene();
 }
 boot();
-</script><div id="rotate"><div><p style="font-size:26px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
-<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
+</script><div id="rotate"><div><p style="font-size:22px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
+<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate>div{max-width:88vw;}#rotate p{white-space:normal;word-break:break-all;line-height:1.5;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
 <script>(function(){var r=document.getElementById('rotate'),ok=false;function chk(){r.classList.toggle('on',!ok&&innerHeight>innerWidth&&innerWidth<900);}document.getElementById('rotateOk').onclick=function(){ok=true;chk();};addEventListener('resize',chk);chk();})();</script>
 </body></html>
