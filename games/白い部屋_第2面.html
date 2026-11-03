@@ -125,11 +125,45 @@ html,body{margin:0;height:100%;background:#0e0e10;overflow:hidden;font-family:"B
 #result{position:absolute;inset:0;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-size:34px;color:#222;}
 #result h1{font-size:70px;margin:0 0 20px;}
 .timer{font-variant-numeric:tabular-nums;color:var(--sub);}
+
+#pnav{display:none;position:absolute;left:0;right:0;top:562px;height:84px;gap:10px;padding:0 12px;z-index:4;}
+#pnav button{flex:1;font:inherit;font-size:24px;border-radius:12px;border:2px solid #666;background:#fff;color:#222;touch-action:manipulation;}
+#stage.portrait #pnav{display:flex;}
+#stage.portrait #hud{height:150px;flex-wrap:wrap;align-content:center;gap:8px;font-size:22px;padding:0 10px;white-space:normal;overflow:visible;}
+#stage.portrait #hud button{font-size:20px;padding:6px 10px;}
+#stage.portrait #hud .dot{width:28px;height:28px;font-size:16px;}
+#stage.portrait #hud .it{font-size:18px;}
+#stage.portrait #scene{inset:auto;left:0;top:150px;width:1920px;height:1080px;transform:scale(0.375);transform-origin:0 0;}
+#stage.portrait .nav,#stage.portrait .navv{display:none !important;}
+#stage.portrait #title,#stage.portrait #result{inset:auto;left:0;top:-400px;width:720px;height:1280px;transform:scale(2.6667);transform-origin:0 0;}
+#stage.portrait:has(#title) #pnav,#stage.portrait:has(#result) #pnav{display:none;}
+#stage.portrait #dlg{left:12px;right:12px;bottom:12px;height:400px;padding:14px;gap:12px;}
+#stage.portrait #dlg .port{width:130px;}
+#stage.portrait #dlg .text{font-size:30px;}
+#stage.portrait #dlg .choices .btn{font-size:24px;}
+#stage.portrait .panel{width:690px;height:1090px;flex-direction:column;}
+#stage.portrait .panel .pic{width:100%;height:500px;padding:14px;}
+#stage.portrait .panel .side{padding:16px 18px;gap:12px;}
+#stage.portrait .panel h2{font-size:28px;}
+#stage.portrait .panel h2 .read{margin-right:70px;font-size:16px;padding:4px 8px;}
+#stage.portrait .panel .qt{font-size:23px;line-height:1.5;}
+#stage.portrait .panel .fmt{font-size:18px;}
+#stage.portrait .panel input{font-size:26px;padding:8px 10px;}
+#stage.portrait .panel .res{font-size:24px;min-height:34px;}
+#stage.portrait .panel .hint{font-size:19px;padding:8px 10px;}
+#stage.portrait .panel .close{top:8px;right:12px;font-size:22px;}
+#stage.portrait .panel .big{font-size:30px;}
+#stage.portrait #title h1{font-size:42px;text-align:center;padding:0 16px;}
+#stage.portrait #title .sub,#stage.portrait #title .note{font-size:18px;text-align:center;padding:0 20px;}
+#stage.portrait #title img{max-height:260px;}
+#stage.portrait #result h1{font-size:42px;}
+#stage.portrait .btn{touch-action:manipulation;}
 .door{background:repeating-linear-gradient(#8a8a8a 0 26px,#5c5c5c 26px 34px) !important;color:#fff;}.door .knob{display:none}.frame{background:#fff}
 </style></head><body>
 <div id="stage">
  <div id="scene"></div>
- <div id="hud"></div>
+ <div id="pnav"><button id="pL">◀ 左の壁</button><button id="pU">▲ 天井</button><button id="pD">▼ 床</button><button id="pR">右の壁 ▶</button></div>
+<div id="hud"></div>
  <div class="nav" id="navL">◀</div><div class="nav" id="navR">▶</div>
  <div class="navv" id="navU">▲ 天井</div><div class="navv" id="navD">▼ 床</div>
  <div id="ov"></div>
@@ -509,8 +543,13 @@ function renderTitle(){
 }
 function intro(){ bgm(true, 'tense'); say(D.rules.map((t, i) => ({t: t, k: 'rule_' + i, face: (D.act['rule_' + i] || [])[0], m: (D.act['rule_' + i] || [])[1]})), () => { S.intro = true; save(); bgm(true, 'main'); }); }
 function fullscreen(){ const d = document.documentElement; if (!document.fullscreenElement) { if (d.requestFullscreen) d.requestFullscreen(); } else { document.exitFullscreen(); } }
-function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+function fit(){
+  const p = innerHeight > innerWidth * 1.05 && innerWidth < 1000; const W = p ? 720 : 1920, H = p ? 1280 : 1080;
+  stage.classList.toggle('portrait', p); stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  const s = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
 addEventListener('resize', fit); fit();
+[['pL', 'navL'], ['pR', 'navR'], ['pU', 'navU'], ['pD', 'navD']].forEach(([a, b]) => { $(a).onclick = () => { const t = $(b); if (t) t.click(); }; });
 let idleT = Date.now();
 function bump(){ idleT = Date.now(); }
 document.addEventListener('click', bump, true); document.addEventListener('keydown', bump, true);
@@ -627,7 +666,4 @@ function boot(){
   screen = 'title'; renderScene();
 }
 boot();
-</script><div id="rotate"><div><p style="font-size:22px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
-<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate>div{max-width:88vw;}#rotate p{white-space:normal;word-break:break-all;line-height:1.5;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
-<script>(function(){var r=document.getElementById('rotate'),ok=false;function chk(){r.classList.toggle('on',!ok&&innerHeight>innerWidth&&innerWidth<900);}document.getElementById('rotateOk').onclick=function(){ok=true;chk();};addEventListener('resize',chk);chk();})();</script>
-</body></html>
+</script></body></html>

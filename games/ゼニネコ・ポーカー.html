@@ -51,6 +51,24 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #title .note{font-size:22px;color:#888;line-height:1.7;text-align:center;}
 #title img{max-height:300px;}
 .log{position:absolute;left:30px;bottom:30px;width:520px;max-height:300px;overflow:hidden;font-size:22px;color:#555;line-height:1.5;}
+#stage.portrait #hud{height:96px;font-size:22px;flex-wrap:wrap;align-content:center;padding:0 10px;gap:8px;white-space:normal;}
+#stage.portrait #hud button{font-size:20px;padding:6px 10px;}
+#stage.portrait #hudname{display:none;}
+#stage.portrait #board{top:96px;}
+#stage.portrait #dlg{left:12px;right:12px;bottom:12px;height:380px;padding:14px;gap:12px;}
+#stage.portrait #dlg .port{width:130px;}
+#stage.portrait #dlg .text{font-size:30px;}
+#stage.portrait #dlg .choices .btn{font-size:24px;}
+#stage.portrait #bubble{max-width:520px;font-size:28px;}
+#stage.portrait .panel{min-width:0;width:690px;max-width:690px;padding:28px 22px;}
+#stage.portrait .panel h1{font-size:44px;}
+#stage.portrait .panel .row{font-size:24px;}
+#stage.portrait .panel .btns{flex-wrap:wrap;}
+#stage.portrait #title h1{font-size:48px;text-align:center;padding:0 16px;}
+#stage.portrait #title .sub{font-size:24px;text-align:center;padding:0 20px;}
+#stage.portrait #title .note{font-size:17px;padding:0 20px;}
+#stage.portrait #title img{max-height:260px;}
+#stage.portrait .btn{touch-action:manipulation;}
 
 #table{position:absolute;left:0;top:0;width:1920px;height:1008px;background:radial-gradient(ellipse at 50% 60%,#2e6b4a 0,#1f4d35 70%,#163b28 100%);}
 .card{position:absolute;width:200px;height:290px;border-radius:16px;background:#fff;border:4px solid #ddd;box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:120px;font-weight:bold;color:#222;box-sizing:border-box;}
@@ -71,6 +89,19 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #catbox{right:80px;bottom:100px;width:360px;height:360px;}
 .log{left:60px;bottom:40px;width:620px;color:#dfe9e2;font-size:22px;}
 #flip{position:absolute;left:860px;top:560px;width:200px;height:290px;}
+#stage.portrait #table{width:720px;height:1184px;}
+#stage.portrait #round{left:16px;top:14px;font-size:22px;padding:6px 14px;}
+#stage.portrait #catcoins{right:16px;top:14px;font-size:22px;padding:6px 14px;}
+#stage.portrait #lab1{left:160px;top:76px;width:400px;font-size:22px;}
+#stage.portrait #catcard{left:260px;top:120px;}
+#stage.portrait #pot{top:430px;font-size:28px;}
+#stage.portrait #yourcard{left:260px;top:500px;}
+#stage.portrait #lab2{left:160px;top:800px;width:400px;font-size:22px;}
+#stage.portrait #acts{left:16px;top:860px;width:688px;gap:10px;}
+#stage.portrait #acts .ttl{font-size:21px;}
+#stage.portrait #acts .btn{font-size:22px;padding:10px 14px;}
+#stage.portrait #catbox{right:8px;top:500px;bottom:auto;width:200px;height:200px;}
+#stage.portrait .log{display:none;}
 
 </style></head>
 <body>
@@ -98,7 +129,12 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 <script>
 const $ = id => document.getElementById(id);
 const stage = $('stage');
-function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+let PORTRAIT = null;
+function fit(){
+  const p = innerHeight > innerWidth * 1.05 && innerWidth < 1000; const W = p ? 720 : 1920, H = p ? 1280 : 1080;
+  if (p !== PORTRAIT) { PORTRAIT = p; stage.classList.toggle('portrait', p); stage.style.width = W + 'px'; stage.style.height = H + 'px'; if (window.ZG && ZG.onRelayout) { try { ZG.onRelayout(); } catch (e) {} } }
+  const s = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
 addEventListener('resize', fit); fit();
 const Q = new URLSearchParams(location.search); const SELFTEST = Q.get('selftest') === '1', DBG = Q.get('dbg') === '1';
 let pref = {sound: true, bgm: true};
@@ -210,7 +246,7 @@ function commonTest(){
   for (const k of Object.keys(D.lines)) if (!D.voice[k]) out.push('no-voice:' + k);
   return out;
 }
-window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L};
+window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L, portrait: () => !!PORTRAIT, onRelayout: null};
 document.addEventListener('keydown', e => { if (dialogOpen() && (e.key === 'Enter' || e.key === ' ') && !$('dlgch').children.length) { e.preventDefault(); nextLine(); } });
 </script>
 <script>
@@ -333,7 +369,8 @@ function finish(bustKey){
 }
 function boot(again){
   S.deck = newDeck(R); S.pot = 0; S.cat = 10; S.round = 0; S.phase = 'idle'; S.offered = false; ZG.setCoins(10); ZG.$('log').innerHTML = ''; upd(); ZG.$('catcard').classList.add('hidden');
-  ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(1180, 560); ZG.bgm('main');
+  ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(ZG.portrait() ? 16 : 1180, ZG.portrait() ? 1100 : 560); ZG.bgm('main');
+  ZG.onRelayout = () => ZG.placeBubble(ZG.portrait() ? 16 : 1180, ZG.portrait() ? 1100 : 560);
   if (again || ZG.DBG) { deal(); return; }
   ZG.say(['rule_0', 'rule_1', 'rule_2', 'rule_3'], deal);
 }
@@ -375,7 +412,4 @@ window.addEventListener('load', () => {
   if (window.ZG_START) window.ZG_START();
 });
 </script>
-<div id="rotate"><div><p style="font-size:22px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
-<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate>div{max-width:88vw;}#rotate p{white-space:normal;word-break:break-all;line-height:1.5;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
-<script>(function(){var r=document.getElementById('rotate'),ok=false;function chk(){r.classList.toggle('on',!ok&&innerHeight>innerWidth&&innerWidth<900);}document.getElementById('rotateOk').onclick=function(){ok=true;chk();};addEventListener('resize',chk);chk();})();</script>
 </body></html>

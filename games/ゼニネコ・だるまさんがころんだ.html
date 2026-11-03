@@ -51,6 +51,24 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #title .note{font-size:22px;color:#888;line-height:1.7;text-align:center;}
 #title img{max-height:300px;}
 .log{position:absolute;left:30px;bottom:30px;width:520px;max-height:300px;overflow:hidden;font-size:22px;color:#555;line-height:1.5;}
+#stage.portrait #hud{height:96px;font-size:22px;flex-wrap:wrap;align-content:center;padding:0 10px;gap:8px;white-space:normal;}
+#stage.portrait #hud button{font-size:20px;padding:6px 10px;}
+#stage.portrait #hudname{display:none;}
+#stage.portrait #board{top:96px;}
+#stage.portrait #dlg{left:12px;right:12px;bottom:12px;height:380px;padding:14px;gap:12px;}
+#stage.portrait #dlg .port{width:130px;}
+#stage.portrait #dlg .text{font-size:30px;}
+#stage.portrait #dlg .choices .btn{font-size:24px;}
+#stage.portrait #bubble{max-width:520px;font-size:28px;}
+#stage.portrait .panel{min-width:0;width:690px;max-width:690px;padding:28px 22px;}
+#stage.portrait .panel h1{font-size:44px;}
+#stage.portrait .panel .row{font-size:24px;}
+#stage.portrait .panel .btns{flex-wrap:wrap;}
+#stage.portrait #title h1{font-size:48px;text-align:center;padding:0 16px;}
+#stage.portrait #title .sub{font-size:24px;text-align:center;padding:0 20px;}
+#stage.portrait #title .note{font-size:17px;padding:0 20px;}
+#stage.portrait #title img{max-height:260px;}
+#stage.portrait .btn{touch-action:manipulation;}
 
 #corridor{position:absolute;left:0;top:0;width:1920px;height:1008px;background:linear-gradient(#f6f6f6 0,#f6f6f6 520px,#e6e6e6 520px,#d9d9d9 100%);}
 #floor{position:absolute;left:0;right:0;top:640px;height:6px;background:#bbb;}
@@ -83,6 +101,21 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #throw{position:absolute;right:60px;top:40px;font-size:26px;padding:12px 22px;}
 #throw small{font-size:18px;}
 .fly{position:absolute;top:560px;width:40px;height:26px;border-radius:50%;background:#f3c233;border:3px solid #b8891a;box-sizing:border-box;z-index:3;transition:left .6s ease-in,top .6s ease-out;}
+#stage.portrait #corridor{width:720px;height:1184px;background:linear-gradient(90deg,#e6e6e6 0,#e6e6e6 120px,#f6f6f6 120px,#f6f6f6 600px,#e6e6e6 600px);}
+#stage.portrait #floor{display:none;}
+#stage.portrait #startline{left:110px;width:500px;height:6px;top:1030px;}
+#stage.portrait #goalline{left:110px;width:500px;height:8px;}
+#stage.portrait #pile{left:70px;width:220px;height:150px;}
+#stage.portrait #player{left:360px;}
+#stage.portrait #pillar{left:110px;width:500px;height:96px;margin-left:0;}
+#stage.portrait #pillar:after{top:28px;}
+#stage.portrait #catbox{right:30px;top:60px;bottom:auto;width:220px;height:220px;}
+#stage.portrait #info{left:20px;top:14px;font-size:26px;}
+#stage.portrait #info b{min-width:0;margin-right:14px;}
+#stage.portrait #hint{left:20px;top:54px;font-size:18px;}
+#stage.portrait #go{bottom:20px;width:640px;font-size:34px;padding:18px 20px;}
+#stage.portrait #throw{left:20px;right:auto;top:100px;font-size:22px;padding:8px 14px;}
+#stage.portrait #bubble{max-width:430px;}
 #bubble{max-width:520px;}
 
 </style></head>
@@ -111,7 +144,12 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 <script>
 const $ = id => document.getElementById(id);
 const stage = $('stage');
-function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+let PORTRAIT = null;
+function fit(){
+  const p = innerHeight > innerWidth * 1.05 && innerWidth < 1000; const W = p ? 720 : 1920, H = p ? 1280 : 1080;
+  if (p !== PORTRAIT) { PORTRAIT = p; stage.classList.toggle('portrait', p); stage.style.width = W + 'px'; stage.style.height = H + 'px'; if (window.ZG && ZG.onRelayout) { try { ZG.onRelayout(); } catch (e) {} } }
+  const s = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
 addEventListener('resize', fit); fit();
 const Q = new URLSearchParams(location.search); const SELFTEST = Q.get('selftest') === '1', DBG = Q.get('dbg') === '1';
 let pref = {sound: true, bgm: true};
@@ -223,7 +261,7 @@ function commonTest(){
   for (const k of Object.keys(D.lines)) if (!D.voice[k]) out.push('no-voice:' + k);
   return out;
 }
-window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L};
+window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L, portrait: () => !!PORTRAIT, onRelayout: null};
 document.addEventListener('keydown', e => { if (dialogOpen() && (e.key === 'Enter' || e.key === ' ') && !$('dlgch').children.length) { e.preventDefault(); nextLine(); } });
 </script>
 <script>
@@ -242,11 +280,23 @@ function clearTimers(){ G.timers.forEach(clearTimeout); G.timers = []; }
 function after(ms, fn){ const t = setTimeout(fn, ms); G.timers.push(t); return t; }
 function rnd(a, b){ return a + (b - a) * ZG.rng(); }
 function pick(arr){ return arr[Math.floor(ZG.rng() * arr.length)]; }
+const Y_START = 1030, Y_END = 330;
+function yOf(x){ return Y_START - (x - START_X) * (Y_START - Y_END) / (1650 - START_X); }   // 縦画面：下から上へ
 function draw(){
-  P.style.left = G.x + 'px'; P.classList.toggle('run', G.vx > MOVE_EPS);
-  ZG.$('goalline').style.left = (lv().goal + 40) + 'px'; ZG.$('pile').style.left = (lv().goal + 60) + 'px';
-  const pl = ZG.$('pillar'); if (lv().pillar != null) { pl.style.display = 'block'; pl.style.left = lv().pillar + 'px'; } else pl.style.display = 'none';
+  P.classList.toggle('run', G.vx > MOVE_EPS);
+  const pl = ZG.$('pillar'); pl.style.display = lv().pillar != null ? 'block' : 'none';
+  if (ZG.portrait()) {
+    P.style.left = '360px'; P.style.top = (yOf(G.x) - 60) + 'px';
+    ZG.$('goalline').style.top = yOf(lv().goal + 40) + 'px'; ZG.$('goalline').style.left = '110px';
+    ZG.$('pile').style.top = (yOf(lv().goal + 40) - 170) + 'px'; ZG.$('pile').style.left = '250px';
+    if (lv().pillar != null) { pl.style.top = (yOf(lv().pillar) - 48) + 'px'; pl.style.left = '110px'; }
+  } else {
+    P.style.left = G.x + 'px'; P.style.top = '522px';
+    ZG.$('goalline').style.left = (lv().goal + 40) + 'px'; ZG.$('goalline').style.top = '540px'; ZG.$('pile').style.left = (lv().goal + 60) + 'px'; ZG.$('pile').style.top = '520px';
+    if (lv().pillar != null) { pl.style.left = lv().pillar + 'px'; pl.style.top = '400px'; }
+  }
 }
+ZG.onRelayout = () => { if (G.phase !== 'idle') draw(); ZG.placeBubble(ZG.portrait() ? 20 : 900, ZG.portrait() ? 300 : 400); };
 function buildPile(n){ const p = ZG.$('pile'); p.innerHTML = ''; for (let i = 0; i < n; i++) { const c = document.createElement('div'); c.className = 'c'; const row = Math.floor(i / 4); c.style.left = ((i % 4) * 44 + row * 22) + 'px'; c.style.top = (150 - row * 26) + 'px'; p.appendChild(c); } }
 function setAway(away){ ZG.$('catbox').classList.toggle('away', away); ZG.badge(away ? '見てない' : '見てる！', away ? '#789' : '#c0392b'); }
 // ---- 物理 ----
@@ -272,7 +322,7 @@ function throwCoin(){
   if (ZG.coins() < 2) { ZG.shout('throw_no'); return false; }
   clearTimers(); G.phase = 'chase'; G.throws++;
   ZG.setCoins(ZG.coins() - 1); const bank = ZG.bankGet(); bank.cat = (bank.cat || 0) + 1; ZG.bankSet(bank); ZG.se('coin', 0.6);
-  const c = document.createElement('div'); c.className = 'fly'; c.style.left = G.x + 'px'; ZG.$('corridor').appendChild(c); requestAnimationFrame(() => { c.style.left = (lv().goal + 120) + 'px'; c.style.top = '600px'; }); after(800, () => c.remove());
+  const c = document.createElement('div'); c.className = 'fly'; if (ZG.portrait()) { c.style.left = '380px'; c.style.top = yOf(G.x) + 'px'; } else c.style.left = G.x + 'px'; ZG.$('corridor').appendChild(c); requestAnimationFrame(() => { if (ZG.portrait()) { c.style.top = '200px'; c.style.left = '560px'; } else { c.style.left = (lv().goal + 120) + 'px'; c.style.top = '600px'; } }); after(800, () => c.remove());
   setAway(true); ZG.badge('小判を拾ってる', '#b8891a'); ZG.setFace('sparkle', 'jump');
   ZG.shout('throw_0', () => { if (G.phase !== 'chase') return; after(900, () => { if (G.phase !== 'chase') return; ZG.shout('throw_back', () => { if (G.phase !== 'chase') return; G.phase = 'between'; setAway(true); ZG.setFace('sleepy', 'sway'); after(500, chant); }); }); });
   return true;
@@ -338,7 +388,7 @@ addEventListener('blur', () => hold(false));
 // ---- 開始 ----
 function boot(again){
   G.level = 0; G.caughtN = 0; G.safeN = 0; G.phase = 'idle'; ZG.setCoins(3); draw(); buildPile(8);
-  ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(900, 400);
+  ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(ZG.portrait() ? 20 : 900, ZG.portrait() ? 300 : 400);
   if (!G.raf) { G.last = performance.now(); G.raf = requestAnimationFrame(tick); }
   if (again || ZG.DBG) { startLevel(); return; }
   ZG.say(['rule_0', 'rule_1', 'rule_2', 'rule_3', 'rule_4'], startLevel);
@@ -375,7 +425,4 @@ window.addEventListener('load', () => {
   if (window.ZG_START) window.ZG_START();
 });
 </script>
-<div id="rotate"><div><p style="font-size:22px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
-<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate>div{max-width:88vw;}#rotate p{white-space:normal;word-break:break-all;line-height:1.5;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
-<script>(function(){var r=document.getElementById('rotate'),ok=false;function chk(){r.classList.toggle('on',!ok&&innerHeight>innerWidth&&innerWidth<900);}document.getElementById('rotateOk').onclick=function(){ok=true;chk();};addEventListener('resize',chk);chk();})();</script>
 </body></html>

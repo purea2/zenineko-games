@@ -51,6 +51,24 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #title .note{font-size:22px;color:#888;line-height:1.7;text-align:center;}
 #title img{max-height:300px;}
 .log{position:absolute;left:30px;bottom:30px;width:520px;max-height:300px;overflow:hidden;font-size:22px;color:#555;line-height:1.5;}
+#stage.portrait #hud{height:96px;font-size:22px;flex-wrap:wrap;align-content:center;padding:0 10px;gap:8px;white-space:normal;}
+#stage.portrait #hud button{font-size:20px;padding:6px 10px;}
+#stage.portrait #hudname{display:none;}
+#stage.portrait #board{top:96px;}
+#stage.portrait #dlg{left:12px;right:12px;bottom:12px;height:380px;padding:14px;gap:12px;}
+#stage.portrait #dlg .port{width:130px;}
+#stage.portrait #dlg .text{font-size:30px;}
+#stage.portrait #dlg .choices .btn{font-size:24px;}
+#stage.portrait #bubble{max-width:520px;font-size:28px;}
+#stage.portrait .panel{min-width:0;width:690px;max-width:690px;padding:28px 22px;}
+#stage.portrait .panel h1{font-size:44px;}
+#stage.portrait .panel .row{font-size:24px;}
+#stage.portrait .panel .btns{flex-wrap:wrap;}
+#stage.portrait #title h1{font-size:48px;text-align:center;padding:0 16px;}
+#stage.portrait #title .sub{font-size:24px;text-align:center;padding:0 20px;}
+#stage.portrait #title .note{font-size:17px;padding:0 20px;}
+#stage.portrait #title img{max-height:260px;}
+#stage.portrait .btn{touch-action:manipulation;}
 
 #bd{position:absolute;left:0;top:0;width:1920px;height:1008px;background:#f3f1ea;}
 .sq{position:absolute;width:132px;height:96px;border:3px solid #999;border-radius:12px;box-sizing:border-box;font-size:22px;color:#333;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
@@ -66,6 +84,17 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 #catbox{right:60px;top:110px;bottom:auto;width:300px;height:300px;}
 #msg{position:absolute;left:60px;top:415px;font-size:26px;color:#666;}
 #bribe{position:absolute;left:60px;top:345px;font-size:24px;padding:10px 18px;}
+#stage.portrait #bd{width:720px;height:1184px;}
+#stage.portrait .sq{width:106px;height:92px;font-size:17px;border-width:2px;border-radius:9px;}
+#stage.portrait .sq .n{font-size:12px;}
+#stage.portrait .sq.goal,#stage.portrait .sq.start{font-size:19px;}
+#stage.portrait .tok{width:46px;height:46px;font-size:16px;border-width:3px;}
+#stage.portrait #panel{left:16px;top:14px;font-size:22px;padding:8px 14px;}
+#stage.portrait #dice{left:16px;top:110px;width:96px;height:96px;font-size:56px;}
+#stage.portrait #rollbtn{left:130px;top:124px;font-size:28px;padding:14px 26px;}
+#stage.portrait #bribe{left:16px;top:230px;font-size:20px;padding:8px 12px;}
+#stage.portrait #msg{left:16px;top:290px;font-size:20px;}
+#stage.portrait #catbox{right:8px;top:90px;bottom:auto;width:180px;height:180px;}
 
 </style></head>
 <body>
@@ -91,7 +120,12 @@ html,body{margin:0;height:100%;background:#111;overflow:hidden;font-family:"BIZ 
 <script>
 const $ = id => document.getElementById(id);
 const stage = $('stage');
-function fit(){ const s = Math.min(innerWidth / 1920, innerHeight / 1080); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')'; }
+let PORTRAIT = null;
+function fit(){
+  const p = innerHeight > innerWidth * 1.05 && innerWidth < 1000; const W = p ? 720 : 1920, H = p ? 1280 : 1080;
+  if (p !== PORTRAIT) { PORTRAIT = p; stage.classList.toggle('portrait', p); stage.style.width = W + 'px'; stage.style.height = H + 'px'; if (window.ZG && ZG.onRelayout) { try { ZG.onRelayout(); } catch (e) {} } }
+  const s = Math.min(innerWidth / W, innerHeight / H); stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+}
 addEventListener('resize', fit); fit();
 const Q = new URLSearchParams(location.search); const SELFTEST = Q.get('selftest') === '1', DBG = Q.get('dbg') === '1';
 let pref = {sound: true, bgm: true};
@@ -203,7 +237,7 @@ function commonTest(){
   for (const k of Object.keys(D.lines)) if (!D.voice[k]) out.push('no-voice:' + k);
   return out;
 }
-window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L};
+window.ZG = {D, $, say, shout, choice, dialogOpen, setFace, badge, se, bgm, setCoins, coins: () => coins, bankGet, bankSet, title: showTitle, result: showResult, hideResult, placeBubble, idle, rng: () => rng(), setRng: f => { rng = f; }, mulberry, pref, SELFTEST, DBG, Q, L, portrait: () => !!PORTRAIT, onRelayout: null};
 document.addEventListener('keydown', e => { if (dialogOpen() && (e.key === 'Enter' || e.key === ' ') && !$('dlgch').children.length) { e.preventDefault(); nextLine(); } });
 </script>
 <script>
@@ -211,8 +245,8 @@ document.addEventListener('keydown', e => { if (dialogOpen() && (e.key === 'Ente
 const SQ = D.game.sq, N = SQ.length, GOAL = N - 1, TOLL = 2, BOUNCE = 22;
 // 盤の座標：3 段の蛇行（0..10 右へ、11..21 左へ、22..31 右へ）
 function pos(i){
+  if (ZG.portrait()) { const row = Math.floor(i / 6), k = i % 6; const col = row % 2 === 0 ? k : 5 - k; return {x: 18 + col * 115, y: 340 + row * 118}; }
   const row = i <= 10 ? 0 : i <= 21 ? 1 : 2; const k = row === 0 ? i : row === 1 ? i - 11 : i - 22;
-  const xs = [1800 - 1750, 1750 - 1750];
   const x = row === 1 ? 1610 - k * 160 : 60 + k * 160 + (row === 2 ? 160 : 0);
   return {x: x, y: 470 + row * 170};
 }
@@ -242,7 +276,7 @@ function bribePrice(n){ return 2 + n; }               // 渡すたびに値上�
 const S = {you: 0, cat: 0, cYou: 5, cCat: 5, restYou: false, restCat: false, turn: 'you', busy: false, over: false, rolls: 0, tollKnown: false, bribes: 0, bribedThisTurn: false};
 const R = () => ZG.rng();
 function upd(){ ZG.$('pYou').textContent = S.cYou; ZG.$('pCat').textContent = S.cCat; ZG.setCoins(S.cYou); placeTok('tokYou', S.you, -14); placeTok('tokCat', S.cat, 14); }
-function placeTok(id, i, dx){ const p = pos(i); const e = ZG.$(id); e.style.left = (p.x + 34 + dx) + 'px'; e.style.top = (p.y + 16 + (dx < 0 ? -8 : 8)) + 'px'; }
+function placeTok(id, i, dx){ const p = pos(i); const e = ZG.$(id); const pt = ZG.portrait(); e.style.left = (p.x + (pt ? 30 : 34) + dx * (pt ? 0.8 : 1)) + 'px'; e.style.top = (p.y + (pt ? 22 : 16) + (dx < 0 ? -8 : 8)) + 'px'; }
 function msg(t){ ZG.$('msg').textContent = t || ''; }
 function buildBoard(){
   const box = ZG.$('squares'); box.innerHTML = '';
@@ -326,7 +360,8 @@ function goal(who){
 }
 function boot(again){
   S.you = 0; S.cat = 0; S.cYou = 5; S.cCat = 5; S.restYou = false; S.restCat = false; S.turn = 'you'; S.busy = false; S.over = false; S.rolls = 0; S.tollKnown = false; S.bribes = 0; S.bribedThisTurn = false;
-  buildBoard(); upd(); setRoll(false); ZG.$('dice').textContent = '－'; ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(880, 150); ZG.bgm('main');
+  buildBoard(); upd(); setRoll(false); ZG.$('dice').textContent = '－'; ZG.idle.keys = ['idle_0', 'idle_1']; ZG.placeBubble(ZG.portrait() ? 16 : 880, ZG.portrait() ? 1060 : 150); ZG.bgm('main');
+  ZG.onRelayout = () => { buildBoard(); upd(); ZG.placeBubble(ZG.portrait() ? 16 : 880, ZG.portrait() ? 1060 : 150); };
   if (again || ZG.DBG) { turn(); return; }
   ZG.say(['rule_0', 'rule_1', 'rule_2'], turn);
 }
@@ -335,6 +370,7 @@ window.ZG_TEST = () => {
   const out = []; const r = ZG.mulberry(3);
   if (SQ.length !== 32 || SQ[0] !== 'start' || SQ[31] !== 'goal') out.push('board');
   for (let i = 0; i < N; i++) { const p = pos(i); if (p.x < 0 || p.x + 132 > 1920 || p.y < 400 || p.y + 96 > 1008) out.push('pos:' + i); }
+  { const seen2 = new Set(); for (let i = 0; i < N; i++) { const row = Math.floor(i / 6), k = i % 6, col = row % 2 === 0 ? k : 5 - k; const x = 18 + col * 115, y = 340 + row * 118; if (x + 106 > 720 || y + 92 > 1184) out.push('ppos:' + i); const key = x + ',' + y; if (seen2.has(key)) out.push('poverlap:' + i); seen2.add(key); } }
   const seen = new Set(); for (let i = 0; i < N; i++) { const p = pos(i); const k = p.x + ',' + p.y; if (seen.has(k)) out.push('overlap:' + i); seen.add(k); }
   for (const t of ['plus1', 'plus2', 'minus1', 'minus2', 'mouse', 'slip', 'wallet', 'rest', 'duel', 'fork']) for (const who of ['you', 'cat']) for (const ch of [true, false]) { const res = landing(t, who, r, ch); if (res.key && !D.lines[res.key]) out.push('no-line:' + res.key); }
   let fell = 0, ok = 0; for (let i = 0; i < 200; i++) { const res = landing('fork', 'you', r, true); if (res.to === 9) fell++; if (res.to === 21) ok++; } if (!fell || !ok) out.push('fork-random');
@@ -372,7 +408,4 @@ window.addEventListener('load', () => {
   if (window.ZG_START) window.ZG_START();
 });
 </script>
-<div id="rotate"><div><p style="font-size:22px;margin:0 0 8px">スマホは横向きにすると遊びやすいニャ</p><p style="font-size:16px;color:#aaa;margin:0 0 20px">小さい所は指で広げて見るニャ</p><button id="rotateOk">このまま遊ぶ</button></div></div>
-<style>#rotate{position:fixed;inset:0;background:#14151c;color:#fff;z-index:9999;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:"BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;}#rotate.on{display:flex;}#rotate>div{max-width:88vw;}#rotate p{white-space:normal;word-break:break-all;line-height:1.5;}#rotate button{font-size:20px;padding:12px 26px;border-radius:12px;border:0;background:#f3c233;color:#1a1300;font-weight:bold;}</style>
-<script>(function(){var r=document.getElementById('rotate'),ok=false;function chk(){r.classList.toggle('on',!ok&&innerHeight>innerWidth&&innerWidth<900);}document.getElementById('rotateOk').onclick=function(){ok=true;chk();};addEventListener('resize',chk);chk();})();</script>
 </body></html>
