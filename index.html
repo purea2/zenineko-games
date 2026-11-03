@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ゼニネコ・ゲームズ</title>
+<meta name="description" content="嘘をつかない猫、ゼニネコと遊ぶブラウザゲーム。脱出ゲームとミニゲーム。無料、インストール不要。"><meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#14151c;--bg2:#1d1f2a;--ink:#f1efe6;--sub:#a9a89f;--gold:#f3c233;--gold2:#b8891a;--card:#232634;--line:#343848;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Kaku Gothic New","BIZ UDPGothic","Hiragino Sans","Meiryo",sans-serif;line-height:1.7;}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+header{position:relative;overflow:hidden;background:radial-gradient(ellipse at 70% 20%,#3a3250 0,#1d1f2a 45%,#14151c 100%);}
+header .wrap{display:flex;align-items:center;gap:40px;padding:70px 20px 50px;flex-wrap:wrap}
+header img{width:300px;max-width:45vw;filter:drop-shadow(0 20px 40px rgba(0,0,0,.6))}
+.ttl{flex:1;min-width:260px}
+.ttl .kicker{color:var(--gold);letter-spacing:.3em;font-size:14px;font-weight:700}
+.ttl h1{font-family:"Kaisei Decol","Zen Kaku Gothic New",serif;font-size:clamp(40px,7vw,72px);margin:6px 0 10px;line-height:1.15;letter-spacing:.04em}
+.ttl p{color:var(--sub);font-size:18px;margin:0 0 20px}
+.coin{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--gold2);vertical-align:-1px;margin-right:6px}
+.notes{display:flex;gap:10px;flex-wrap:wrap}
+.notes span{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-size:14px;color:var(--sub)}
+section{padding:40px 0 10px}
+section h2{font-family:"Kaisei Decol",serif;font-size:30px;margin:0 0 18px;color:var(--gold);letter-spacing:.06em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-4px);border-color:var(--gold2)}
+.card .cat{width:100%;height:190px;object-fit:contain;background:linear-gradient(#2a2d3d,#232634);padding:14px}
+.card .body{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+.card h3{margin:0 0 8px;font-size:21px;line-height:1.4}
+.card p{margin:0 0 12px;color:var(--sub);font-size:15px;flex:1}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tags span{font-size:12px;color:var(--gold);border:1px solid var(--gold2);border-radius:999px;padding:1px 10px}
+.btns{display:flex;gap:10px;align-items:center}
+.play{background:var(--gold);color:#1a1300;text-decoration:none;font-weight:700;padding:10px 22px;border-radius:12px;font-size:16px}
+.play:hover{background:#ffd666}
+.video{font-size:14px;color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--sub)}
+.video.off{border:0;opacity:.7}
+.howto{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:22px 26px;margin-top:30px}
+.howto h2{font-size:22px;margin:0 0 10px}
+.howto ul{margin:0;padding-left:20px;color:var(--sub)}
+footer{padding:40px 0 60px;color:var(--sub);font-size:13px;border-top:1px solid var(--line);margin-top:50px}
+footer p{margin:4px 0}
+@media (max-width:600px){header .wrap{padding:40px 16px 30px;gap:20px}.card .cat{height:150px}}
+</style></head>
+<body>
+<header><div class="wrap">
+  <img src="img/cool.webp" alt="ゼニネコ">
+  <div class="ttl"><div class="kicker">ZENINEKO GAMES</div><h1>ゼニネコ・ゲームズ</h1>
+    <p>嘘をつかない猫、ゼニネコと遊ぶブラウザゲーム。<br>聞かれないことは、言わない。</p>
+    <div class="notes"><span><span class="coin"></span>無料・インストール不要</span><span>PC の Chrome 推奨</span><span>音を出して遊ぶ</span><span>答えはゲームの中に書いていない</span></div>
+  </div>
+</div></header>
+<main class="wrap">
+<section><h2>脱出ゲーム</h2><div class="grid"><article class="card"><img class="cat" src="img/sleepy.webp" alt=""><div class="body"><h3>白い部屋からの脱出　第1面「ゼニネコの料金所」</h3><p>白い部屋で目を覚ます。ゲームマスターは、嘘をつかない猫。8 つの謎を解いて小判を集め、料金箱に 9 枚。……8 つしかないのに？</p><div class="tags"><span>謎解き</span><span>30〜60 分</span><span>★★☆</span></div><div class="btns"><a class="play" href="games/白い部屋_第1面.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article><article class="card"><img class="cat" src="img/cool.webp" alt=""><div class="body"><h3>第2面「ゼニネコの倉庫」</h3><p>暗い倉庫。シャッターを上げるには小判 7 枚と、8 文字の合言葉。合言葉は、どこにも書いていない。</p><div class="tags"><span>謎解き</span><span>30〜60 分</span><span>★★☆</span></div><div class="btns"><a class="play" href="games/白い部屋_第2面.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article><article class="card"><img class="cat" src="img/sparkle.webp" alt=""><div class="body"><h3>第3面「ゼニネコの銀行」</h3><p>頭取はゼニネコ。金庫扉は小判 9 枚。足りない分は、商売で何とかする。</p><div class="tags"><span>謎解き</span><span>30〜60 分</span><span>★★★</span></div><div class="btns"><a class="play" href="games/白い部屋_第3面.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article></div></section><section><h2>ミニゲーム</h2><div class="grid"><article class="card"><img class="cat" src="img/surprise.webp" alt=""><div class="body"><h3>だるまさんがころんだ</h3><p>猫が壁を向いている間だけ進める。振り向いた時に動いていたら小判を取られる。3 ラウンド、だんだん意地悪に。</p><div class="tags"><span>アクション</span><span>5〜8 分</span><span>★★☆</span></div><div class="btns"><a class="play" href="games/ゼニネコ・だるまさんがころんだ.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article><article class="card"><img class="cat" src="img/cool.webp" alt=""><div class="body"><h3>インディアンポーカー</h3><p>自分の札だけ見えない。毎回 1 つだけ質問できる。猫は嘘をつかない。……でも顔に出る。</p><div class="tags"><span>カード</span><span>10 分</span><span>★★☆</span></div><div class="btns"><a class="play" href="games/ゼニネコ・ポーカー.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article><article class="card"><img class="cat" src="img/nyafufu.webp" alt=""><div class="body"><h3>ゼニネコすごろく</h3><p>先に出口に着いた方の勝ち。小判の増減、勝負マス、事件、分かれ道。細かい決まりは、その時に言う。</p><div class="tags"><span>ボード</span><span>10〜15 分</span><span>★☆☆</span></div><div class="btns"><a class="play" href="games/ゼニネコすごろく.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article><article class="card"><img class="cat" src="img/angry.webp" alt=""><div class="body"><h3>ワンターンキル</h3><p>手札を順に使って、1 ターンで猫の HP を削り切る。削り切れないと小判を取られる。5 ステージ、全部ぴったり。</p><div class="tags"><span>パズル</span><span>10〜15 分</span><span>★★★</span></div><div class="btns"><a class="play" href="games/ゼニネコ・ワンターンキル.html">遊ぶ</a><span class="video off">動画は準備中</span></div></div></article></div></section>
+<div class="howto"><h2>遊ぶ前に</h2><ul>
+<li>「遊ぶ」を押すとそのまま始まる。画面は自動で広がる。F11 や「全画面」ボタンで全画面になる。</li>
+<li>進み具合はこのブラウザに保存される。別の端末には引き継がれない。</li>
+<li>小判の残高はゲームをまたいで持ち越す（ミニゲーム）。</li>
+<li>動画を見る前に遊ぶと、初見の驚きがそのまま味わえる。</li>
+</ul></div>
+</main>
+<footer class="wrap">
+<p>声：VOICEVOX「猫使ビィ」　／　効果音：Pixabay（dragon-studio、soundreality）ほか自作　／　BGM：自作　／　絵：自作</p>
+<p>ゲームの内容・ゼニネコのキャラクターの無断転載はご遠慮ください。</p>
+</footer>
+</body></html>
